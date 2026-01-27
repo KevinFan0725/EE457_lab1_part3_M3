@@ -102,10 +102,10 @@ always @(posedge Clk, posedge Reset)
                               Min <= M[I];
                               I <= I + 1;
                            end
-  		        else if((M[I] > Min) && (Flag == 1))
+  		                else if((M[I] > Min) && (Flag == 1))
                               I <= I + 1;
                         else if((M[I] > Min) && (Flag == 0))         
-			      Flag <= 1;
+			                  Flag <= 1;
              	    
 
 					
@@ -121,7 +121,9 @@ always @(posedge Clk, posedge Reset)
                          if((M[I] <= Min) && (I != 15))
                                state <= CMn;
                          else if(M[I] > Min)
-                               State <= CMx;
+                               state <= CMx;
+				         else if(M[I] <= Min)&&(I == 15)
+							   state <= DONE;
 					
 					
 					
@@ -137,7 +139,16 @@ always @(posedge Clk, posedge Reset)
 	        CMx :
 	          begin 
 	             // RTL operations in the Data Path   		                  
-				    
+				  Flag <= 0;
+				  if(M[I] >= Max)
+                        begin
+                              Max <= M[I];
+                              I <= I + 1;
+                        end
+				  else if((M[I] < Max) && (Flag == 1))
+                              I <= I + 1;
+				  else if((M[I] < Max) && (Flag == 0))         
+			                  Flag <= 1;
 
 					
 					
@@ -149,7 +160,12 @@ always @(posedge Clk, posedge Reset)
 					
 					
 				 // state transitions in the control unit    
-
+				  if((M[I] >= Max) && (I != 15))
+                               state <= CMx;
+				  else if(M[I] < Max)
+                               state <= CMn;
+				  else if(M[I] >= Max)&&(I == 15)
+							   state <= DONE;
 					
 					
 					
