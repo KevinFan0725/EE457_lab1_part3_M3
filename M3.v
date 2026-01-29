@@ -66,10 +66,10 @@ always @(posedge Clk, posedge Reset)
     if (Reset)
        begin
          state <= INI;
-         I <= 4'bXXXX;   // to avoid recirculating mux controlled by Reset 
-	      Min <= 8'bXXXXXXXX;
-	      Max <= 8'bXXXXXXXX;
-		  Flag <= 1'bX;
+         I <= 4'b0000;   // to avoid recirculating mux controlled by Reset 
+	      Min <= 8'b11111111;
+	      Max <= 8'b00000000;
+		  Flag <= 1'b0;
 	    end
     else
        begin
@@ -102,7 +102,7 @@ always @(posedge Clk, posedge Reset)
                               Min <= M[I];
                               I <= I + 1;
                            end
-  		                else if((M[I] > Min) && (Flag == 1))
+  		        else if((M[I] > Min) && (Flag == 1))
                               I <= I + 1;
                         else if((M[I] > Min) && (Flag == 0))         
 			                  Flag <= 1;
@@ -122,8 +122,8 @@ always @(posedge Clk, posedge Reset)
                                state <= CMn;
                          else if(M[I] > Min)
                                state <= CMx;
-				         else if(M[I] <= Min)&&(I == 15)
-							   state <= DONE;
+		         else if((M[I] <= Min)&&(I == 15))
+			       state <= DONE;
 					
 					
 					
@@ -133,22 +133,22 @@ always @(posedge Clk, posedge Reset)
 					
 					
 					
-			  end
+	           end
 			  
 			  
 	        CMx :
 	          begin 
 	             // RTL operations in the Data Path   		                  
-				  Flag <= 0;
-				  if(M[I] >= Max)
+		      Flag <= 0;
+		      if(M[I] >= Max)
                         begin
                               Max <= M[I];
                               I <= I + 1;
                         end
-				  else if((M[I] < Max) && (Flag == 1))
+		      else if((M[I] < Max) && (Flag == 1))
                               I <= I + 1;
-				  else if((M[I] < Max) && (Flag == 0))         
-			                  Flag <= 1;
+		      else if((M[I] < Max) && (Flag == 0))         
+			      Flag <= 1;
 
 					
 					
@@ -160,12 +160,12 @@ always @(posedge Clk, posedge Reset)
 					
 					
 				 // state transitions in the control unit    
-				  if((M[I] >= Max) && (I != 15))
+			if((M[I] >= Max) && (I != 15))
                                state <= CMx;
-				  else if(M[I] < Max)
+			else if(M[I] < Max)
                                state <= CMn;
-				  else if(M[I] >= Max)&&(I == 15)
-							   state <= DONE;
+			else if((M[I] >= Max)&&(I == 15))
+		               state <= DONE;
 					
 					
 					
