@@ -60,16 +60,16 @@ always @(*) // same as   always @(A, B, Ainv, Binv, CIN, Opr, LESS)
 	  reg RESULT_AND, RESULT_OR, RESULT_ADD_SUB, RESULT_SLT;
 	  reg Am, Bm; // Am is the A at the output of the mux controlled by AINV; Similarly Bm
   
-		Am = AINV ? 		;  	//  fill-in   ~A : A    or  A : ~A  
-		Bm = BINV ? 		;	//  fill-in   ~B : B    or  B : ~B 
+		Am = AINV ? ~A:A		;  	//  fill-in   ~A : A    or  A : ~A  
+		Bm = BINV ? ~B:B		;	//  fill-in   ~B : B    or  B : ~B 
 
 		// fill-in the following lines using Am, Bm, CIN
-		RESULT_AND = 		;
-		RESULT_OR  = 		;
-		ADD_R = 			;
+		RESULT_AND = Am & Bm		;
+		RESULT_OR  = Am | Bm		;
+		ADD_R = Am + Bm + CIN			;
 		RESULT_ADD_SUB = ADD_R;
 		RESULT_SLT = LESS;
-		COUT   =  								;
+		  COUT   = ((Am&Bm) | (Am&CIN) | (Bm&CIN))								;
 		
 		case (Opr)
 				0	: // 2'b00 for the SLT A, B instruction ( if A < B, RESULT =1)
@@ -112,20 +112,20 @@ wire BINV, SET, LESS_0;
 wire [3:0] ADD_R;
 
 // Equate both of these to the input BNEG so that you negate B by doing (B' + 1)
-assign BINV = 				; // fill-in this line
-assign CIN = 				; // fill-in this line // CIN is the Carry-In to the alu0 slice and as well as Carry-In for the 4-bit ALU 
+assign BINV = BNEG				; // fill-in this line
+assign CIN = BNEG				; // fill-in this line // CIN is the Carry-In to the alu0 slice and as well as Carry-In for the 4-bit ALU 
 
-assign COUT = 				; // fill-in this line This is COUT of the 4-bit adder. Is it COUT3 or COUT4?
-assign OVERFLOW = 				; // fill-in this line
+assign COUT = COUT4				; // fill-in this line This is COUT of the 4-bit adder. Is it COUT3 or COUT4?
+assign OVERFLOW = COUT3^COUT4				; // fill-in this line
 assign SET = ADD_R[3]; // Adder result from the alu3 (the most-significant alu slice)
-assign LESS_0 = 				 ; // fill-in this line // Think carefully about this
+assign LESS_0 = SET ^ OVERFLOW				 ; // fill-in this line // Think carefully about this
 // Please corect the next line!!!!
-assign ZERO = 	( (~RESULT[0]) | (~RESULT[1]) | (~RESULT[2]) | (~RESULT[3]) );  // correct this line !!!! *****
+	assign ZERO = 	~(RESULT[0] | RESULT[1] | RESULT[2] | RESULT[3] );  // correct this line !!!! *****
 
 // Instantiate the alu_1_bit four times. Use LESS_0 
 // Follow the order carefully since we are using positional association (positional mapping)
 // module alu_1_bit (A, B, CIN, LESS, AINV, BINV, Opr, RESULT, COUT, ADD_R);
-alu_1_bit alu0 (																	); // fill-in this line
+	alu_1_bit alu0 (A[0],b[0],CIN,LESS_0,RESULT[0],COUT1,ADD_R[0]);																	); // fill-in this line
 alu_1_bit alu1 (A[1], B[1], COUT1, 1'b0, AINV, BINV, Opr, RESULT[1], COUT2, ADD_R[1]);
 alu_1_bit alu2 (A[2], B[2], COUT2, 1'b0, AINV, BINV, Opr, RESULT[2], COUT3, ADD_R[2]);
 alu_1_bit alu3 (A[3], B[3], COUT3, 1'b0, AINV, BINV, Opr, RESULT[3], COUT4, ADD_R[3]);
