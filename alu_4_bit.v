@@ -125,7 +125,7 @@ assign LESS_0 = SET ^ OVERFLOW				 ; // fill-in this line // Think carefully abo
 // Instantiate the alu_1_bit four times. Use LESS_0 
 // Follow the order carefully since we are using positional association (positional mapping)
 // module alu_1_bit (A, B, CIN, LESS, AINV, BINV, Opr, RESULT, COUT, ADD_R);
-	alu_1_bit alu0 (A[0],B[0],CIN,LESS_0,AINV,BINV,Opr,RESULT[0],COUT1,ADD_R[0]);																); // fill-in this line
+	alu_1_bit alu0 (A[0],B[0],CIN,LESS_0,AINV,BINV,Opr,RESULT[0],COUT1,ADD_R[0]);												// fill-in this line
 alu_1_bit alu1 (A[1], B[1], COUT1, 1'b0, AINV, BINV, Opr, RESULT[1], COUT2, ADD_R[1]);
 alu_1_bit alu2 (A[2], B[2], COUT2, 1'b0, AINV, BINV, Opr, RESULT[2], COUT3, ADD_R[2]);
 alu_1_bit alu3 (A[3], B[3], COUT3, 1'b0, AINV, BINV, Opr, RESULT[3], COUT4, ADD_R[3]);
